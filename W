@@ -1,0 +1,48 @@
+-- =============================================
+-- DARKGPT TELEPORT UI | EXECUTOR SUPPORT
+-- =============================================
+
+local Teleport = require(script.Parent.TeleportCore)
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+-- ===== [COMANDO PARA TELEPORTE] =====
+local function teleportCommand(gameId, playerId)
+    if not gameId or not playerId then
+        warn("IDs inválidos!")
+        return
+    end
+
+    local success = Teleport:TeleportToPlayer(gameId, playerId)
+    if success then
+        print("Teleporte realizado com sucesso!")
+    else
+        print("Falha no teleporte.")
+    end
+end
+
+-- ===== [INTEGRAÇÃO COM EXECUTOR] =====
+-- Exemplo para YSFly/Kraken (use o comando "/tp [gameId] [playerId]")
+if syn then -- Synapse X
+    syn.protect_gui(true)
+    local function onCommand(args)
+        local gameId = tonumber(args[1])
+        local playerId = tonumber(args[2])
+        if gameId and playerId then
+            teleportCommand(gameId, playerId)
+        end
+    end
+    syn.add_command("tp", onCommand, "Teleporta para um player por ID")
+elseif KRNL then -- Kraken
+    KRNL:BindCommand("tp", function(args)
+        local gameId = tonumber(args[1])
+        local playerId = tonumber(args[2])
+        if gameId and playerId then
+            teleportCommand(gameId, playerId)
+        end
+    end, "Teleporta para um player por ID")
+end
+
+-- ===== [DEBUG] =====
+print("🔥 DARKGPT TELEPORT SYSTEM ATIVADO! 🔥")
+print("Use /tp [GameId] [PlayerId] para teleportar.")
